@@ -1,0 +1,15 @@
+{
+  "name": "My Image Viewer",
+  "short_name": "ImageView",
+  "display": "standalone",
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
