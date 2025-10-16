@@ -5,7 +5,9 @@ const gallery = document.getElementById("gallery");
 const modal = document.getElementById("modal");
 const modalImg = document.getElementById("modalImg");
 
-function save() { localStorage.setItem("images", JSON.stringify(images)); }
+function save() {
+  localStorage.setItem("images", JSON.stringify(images));
+}
 
 function render() {
   gallery.innerHTML = "";
@@ -63,16 +65,15 @@ modal.onclick = (e) => {
 // ---- ピンチズーム＋パン ----
 let scale = 1, lastScale = 1;
 let posX = 0, posY = 0;
-let originX = 0, originY = 0;
 let startDist = 0;
 let startMid = { x: 0, y: 0 };
 let isPanning = false;
 let startPan = { x: 0, y: 0 };
 
 function resetTransform() {
-  scale = 1; lastScale = 1;
-  posX = 0; posY = 0;
-  originX = 0; originY = 0;
+  scale = 1;
+  posX = 0;
+  posY = 0;
   updateTransform();
 }
 
@@ -114,16 +115,15 @@ modalImg.addEventListener("touchmove", e => {
     e.preventDefault();
     const newDist = getDistance(e.touches);
     const mid = getMidpoint(e.touches);
-    const deltaScale = newDist / startDist;
-    const newScale = Math.max(1, Math.min(4, lastScale * deltaScale));
+    const newScale = Math.max(1, Math.min(4, lastScale * (newDist / startDist)));
 
-    // 拡大の中心を指の中心に追従させる
-    const dx = (mid.x - originX);
-    const dy = (mid.y - originY);
-    posX -= dx * (newScale / scale - 1);
-    posY -= dy * (newScale / scale - 1);
-    originX = mid.x;
-    originY = mid.y;
+    // 拡大の中心を維持するための補正
+    const dx = mid.x - startMid.x;
+    const dy = mid.y - startMid.y;
+
+    const scaleDiff = newScale / scale;
+    posX = (posX - mid.x) * scaleDiff + mid.x + dx;
+    posY = (posY - mid.y) * scaleDiff + mid.y + dy;
 
     scale = newScale;
     updateTransform();
